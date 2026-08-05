@@ -1,0 +1,313 @@
+:root {
+  --sl-content-width: 58rem;
+  --mh-accent: #c62828;
+  --mh-accent-bright: #e06f6f;
+  --mh-accent-soft: color-mix(in srgb, var(--mh-accent) 16%, transparent);
+  --mh-line: color-mix(in srgb, currentColor 12%, transparent);
+  --sl-color-accent-low: var(--mh-accent-soft);
+  --sl-color-accent: var(--mh-accent);
+  --sl-color-accent-high: var(--mh-accent-bright);
+}
+
+.sl-markdown-content .mh-weapon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+  gap: 0.85rem;
+  margin: 1.5rem 0 2.5rem;
+}
+
+.sl-markdown-content .mh-weapon-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--mh-line);
+  border-radius: 0.75rem;
+  background: linear-gradient(145deg, var(--mh-accent-soft), transparent 45%), var(--sl-color-gray-6);
+  box-shadow: 0 0.5rem 1.5rem color-mix(in srgb, #000 10%, transparent);
+}
+
+.sl-markdown-content .mh-weapon-card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.8rem 0;
+  color: var(--sl-color-gray-3);
+  font: 750 0.65rem/1 var(--sl-font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content .mh-weapon-card__meta span:first-child {
+  color: var(--mh-accent-bright);
+}
+
+.sl-markdown-content .mh-weapon-card__art {
+  min-height: 7.5rem;
+  margin: 0.65rem;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--mh-line);
+  border-radius: 0.55rem;
+  background: radial-gradient(circle at 50% 45%, var(--mh-accent-soft), transparent 62%), color-mix(in srgb, var(--sl-color-bg) 78%, transparent);
+}
+
+.sl-markdown-content .mh-weapon-card__art img {
+  width: auto;
+  max-width: 88%;
+  max-height: 4.5rem;
+  margin: 0;
+  filter: drop-shadow(0 0.65rem 0.65rem color-mix(in srgb, #000 36%, transparent));
+}
+
+.sl-markdown-content .mh-weapon-card__art--missing {
+  color: var(--sl-color-gray-3);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content .mh-weapon-card h3 {
+  margin: 0;
+  padding: 0.15rem 0.8rem 0.8rem;
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+}
+
+.sl-markdown-content .mh-weapon-card p {
+  margin: -0.45rem 0 0;
+  padding: 0 0.8rem 0.85rem;
+  color: var(--sl-color-gray-3);
+  font-size: 0.76rem;
+  line-height: 1.45;
+}
+
+.sl-markdown-content .mh-weapon-card--warning {
+  border-color: color-mix(in srgb, #e6a23c 55%, var(--mh-line));
+  background: linear-gradient(145deg, color-mix(in srgb, #e6a23c 13%, transparent), transparent 48%), var(--sl-color-gray-6);
+}
+
+.sl-markdown-content table:is(:has(img[alt^="Weather preset"]), :has(img[alt^="Wheel model"]), :has(img[alt^="Map blip"])) {
+  display: block;
+  width: 100%;
+  margin: 1.5rem 0 3rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.sl-markdown-content table:is(:has(img[alt^="Weather preset"]), :has(img[alt^="Wheel model"]), :has(img[alt^="Map blip"])) thead {
+  display: none;
+}
+
+.sl-markdown-content table:is(:has(img[alt^="Weather preset"]), :has(img[alt^="Wheel model"]), :has(img[alt^="Map blip"])) tbody {
+  display: grid;
+  gap: 1rem;
+}
+
+.sl-markdown-content table:is(:has(img[alt^="Weather preset"]), :has(img[alt^="Wheel model"]), :has(img[alt^="Map blip"])) tr {
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  display: grid;
+  border: 1px solid var(--mh-line);
+  border-radius: 0.75rem;
+  background: linear-gradient(160deg, var(--mh-accent-soft), transparent 42%), var(--sl-color-gray-6);
+}
+
+.sl-markdown-content table:is(:has(img[alt^="Weather preset"]), :has(img[alt^="Wheel model"]), :has(img[alt^="Map blip"])) td {
+  min-width: 0;
+  border: 0;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) tbody {
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) tr {
+  grid-template-columns: 1fr auto auto;
+  grid-template-areas:
+    "preview preview preview"
+    "name name name"
+    "condition clock game";
+  box-shadow: 0 0.6rem 1.8rem color-mix(in srgb, #000 12%, transparent);
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.75rem;
+  color: var(--sl-color-gray-3);
+  font-size: 0.72rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(1) {
+  grid-area: name;
+  padding-bottom: 0.35rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(1) code {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  color: var(--sl-color-white);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(2) {
+  grid-area: game;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(2)::before {
+  content: "T";
+  font: 700 0.62rem/1 var(--sl-font-mono);
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(3) {
+  grid-area: clock;
+  font: 750 0.72rem/1 var(--sl-font-mono);
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(4) {
+  grid-area: condition;
+  color: var(--mh-accent-bright);
+  font-size: 0.66rem;
+  font-weight: 850;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(5) {
+  grid-area: preview;
+  padding: 0;
+  border-bottom: 1px solid var(--mh-line);
+  background: var(--sl-color-bg);
+}
+
+.sl-markdown-content table:has(img[alt^="Weather preset"]) td:nth-child(5) img {
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) tbody {
+  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) tr {
+  grid-template-areas: "preview" "name";
+  box-shadow: 0 0.6rem 1.8rem color-mix(in srgb, #000 12%, transparent);
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) td:nth-child(1) {
+  grid-area: name;
+  padding: 0.75rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) td:nth-child(1) code {
+  color: var(--sl-color-white);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) td:nth-child(2) {
+  grid-area: preview;
+  padding: 0;
+  border-bottom: 1px solid var(--mh-line);
+  background: var(--sl-color-bg);
+}
+
+.sl-markdown-content table:has(img[alt^="Wheel model"]) td:nth-child(2) img {
+  width: 100%;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) tbody {
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: 0.8rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) tr {
+  grid-template-columns: 1fr 1fr;
+  grid-template-areas: "preview preview" "library id";
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.65rem 0.75rem;
+  color: var(--sl-color-gray-3);
+  font-size: 0.72rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td::before {
+  font: 700 0.58rem/1 var(--sl-font-mono);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(1) {
+  grid-area: library;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(1)::before {
+  content: "Lib";
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(2) {
+  grid-area: id;
+  justify-content: flex-end;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(2)::before {
+  content: "ID";
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(1) code,
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(2) code {
+  color: var(--mh-accent-bright);
+  background: transparent;
+  font-weight: 800;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(3) {
+  grid-area: preview;
+  min-height: 6rem;
+  justify-content: center;
+  border-bottom: 1px solid var(--mh-line);
+  background: radial-gradient(circle at 50% 50%, var(--mh-accent-soft), transparent 65%), var(--sl-color-bg);
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(3)::before {
+  display: none;
+}
+
+.sl-markdown-content table:has(img[alt^="Map blip"]) td:nth-child(3) img {
+  width: auto;
+  max-width: 3.5rem;
+  max-height: 3.5rem;
+  margin: 0;
+  filter: drop-shadow(0 0.35rem 0.5rem color-mix(in srgb, #000 45%, transparent));
+}
+
+@media (max-width: 520px) {
+  .sl-markdown-content .mh-weapon-grid,
+  .sl-markdown-content table:has(img[alt^="Weather preset"]) tbody,
+  .sl-markdown-content table:has(img[alt^="Wheel model"]) tbody {
+    grid-template-columns: 1fr;
+  }
+
+  .sl-markdown-content table:has(img[alt^="Map blip"]) tbody {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

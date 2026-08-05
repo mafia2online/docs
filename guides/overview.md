@@ -1,3 +1,8 @@
+---
+title: Overview
+group: Guides
+---
+
 M2O resources run JavaScript in one of two environments:
 
 - **Server resources** run in Node.js and own authoritative game state.
