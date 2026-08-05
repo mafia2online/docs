@@ -1,0 +1,99 @@
+name: Generate and deploy documentation
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [contract-published]
+  workflow_dispatch:
+    inputs:
+      channel:
+        description: Documentation channel
+        default: testing
+        required: true
+        type: string
+      contract_revision:
+        description: Optional immutable contract revision
+        required: false
+        type: string
+
+concurrency:
+  group: deploy-docs-${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      M2O_DOCS_CHANNEL: ${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
+      M2O_CONTRACT_CHANNEL: ${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
+      M2O_CONTRACT_REVISION: ${{ github.event.client_payload.contract_revision || github.event.inputs.contract_revision }}
+      M2O_SERVICES_API_URL: ${{ vars.M2O_SERVICES_API_URL }}
+      M2O_SERVICES_MOD_ID: ${{ vars.M2O_SERVICES_MOD_ID }}
+      MAFIAHUB_DOCS_UPLOAD_TOKEN: ${{ secrets.M2O_DOCS_UPLOAD_TOKEN }}
+    steps:
+      - name: Checkout public documentation
+        uses: actions/checkout@v5
+
+      - name: Set up pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          version: 10.4.1
+
+      - name: Set up Node
+        uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Resolve canonical documentation target
+        id: target
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${M2O_SERVICES_API_URL:?M2O_SERVICES_API_URL is not set}"
+          : "${M2O_SERVICES_MOD_ID:?M2O_SERVICES_MOD_ID is not set}"
+          : "${MAFIAHUB_DOCS_UPLOAD_TOKEN:?M2O_DOCS_UPLOAD_TOKEN is not set}"
+          CLI_VERSION="$(node -p 'require("./docs.config.json").servicesCliVersion')"
+          TARGET="$(pnpm --silent dlx "@mafiahub/services-cli@${CLI_VERSION}" docs target \
+            --api-url "${M2O_SERVICES_API_URL}" \
+            --mod-id "${M2O_SERVICES_MOD_ID}" \
+            --channel "${M2O_DOCS_CHANNEL}" \
+            --token "${MAFIAHUB_DOCS_UPLOAD_TOKEN}" \
+            --json)"
+          TARGET_LINE="$(TARGET="${TARGET}" node --input-type=module -e '
+            const target = JSON.parse(process.env.TARGET);
+            if (!target.siteUrl || !target.basePath) throw new Error("Services returned an invalid documentation target");
+            console.log(target.siteUrl + "\t" + target.basePath);
+          ')"
+          IFS=$'\t' read -r SITE_URL BASE_PATH <<< "${TARGET_LINE}"
+          echo "cli_version=${CLI_VERSION}" >> "${GITHUB_OUTPUT}"
+          echo "site_url=${SITE_URL}" >> "${GITHUB_OUTPUT}"
+          echo "base_path=${BASE_PATH}" >> "${GITHUB_OUTPUT}"
+
+      - name: Generate complete documentation
+        env:
+          M2O_DOCS_SITE_URL: ${{ steps.target.outputs.site_url }}
+          M2O_DOCS_BASE_PATH: ${{ steps.target.outputs.base_path }}
+        run: pnpm build
+
+      - name: Deploy static documentation
+        shell: bash
+        run: |
+          set -euo pipefail
+          CONTRACT_REVISION="$(cat .cache/contract-revision)"
+          VERSION="docs-${GITHUB_SHA::7}-${CONTRACT_REVISION:0:7}"
+          pnpm dlx "@mafiahub/services-cli@${{ steps.target.outputs.cli_version }}" docs deploy \
+            --api-url "${M2O_SERVICES_API_URL}" \
+            --mod-id "${M2O_SERVICES_MOD_ID}" \
+            --channel "${M2O_DOCS_CHANNEL}" \
+            --version "${VERSION}" \
+            --root dist \
+            --token "${MAFIAHUB_DOCS_UPLOAD_TOKEN}" \
+            --json

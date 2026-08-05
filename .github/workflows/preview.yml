@@ -30,4 +30,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build preview
+        env:
+          M2O_SERVICES_API_URL: ${{ vars.M2O_SERVICES_API_URL }}
+          M2O_CONTRACT_CHANNEL: testing
         run: pnpm build

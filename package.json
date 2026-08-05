@@ -5,14 +5,8 @@
   "type": "module",
   "packageManager": "pnpm@10.4.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview"
-  },
-  "devDependencies": {
-    "@astrojs/starlight": "0.41.7",
-    "astro": "7.1.6",
-    "sharp": "0.35.3",
-    "typescript": "6.0.3"
+    "docs:sync": "node scripts/sync_contract.mjs",
+    "dev": "node scripts/docs.mjs dev",
+    "build": "node scripts/docs.mjs build"
   }
 }

@@ -2,7 +2,7 @@
 
 Public, maintainer-authored guides for the M2O scripting API.
 
-The closed-source mod remains authoritative for generated client and server API contracts. The documentation build checks out this repository at an immutable revision and composes these guides with that generated reference.
+The closed-source mod remains authoritative for generated client and server API contracts. It publishes those contracts as immutable artifacts to MafiaHub Services. This repository downloads an exact contract revision, composes it with the public guides, generates the complete site, and deploys it to the standalone documentation service.
 
 ## Structure
 
@@ -10,9 +10,11 @@ The closed-source mod remains authoritative for generated client and server API 
 - `guides/server/` contains server-only catalogs and resources.
 - Image directories live beside the Markdown document that references them.
 - `docs.config.json` owns the published site's generator pin, branding, links, navigation inputs, and community-content mapping.
+- `scripts/sync_contract.mjs` downloads and verifies the public scripting contract.
+- `scripts/docs.mjs` is the single local and CI generation entrypoint.
 - `src/styles/production.css` is the production theme shared by the standalone site and local preview.
 
-The closed-source Mod repository owns only the generated API contracts, reference metadata, and target binding configuration. It does not own authored website guides or presentation files.
+The closed-source Mod repository owns only contract generation and publication. It does not render or deploy the documentation website.
 
 ## Contributing
 
@@ -20,7 +22,7 @@ Open a pull request with the guide or asset change. Keep local image references 
 
 ### Local preview
 
-The preview site is completely public and self-contained. It does not require the closed-source mod, Mafia II, the Services repository, platform credentials, or a documentation upload token. It renders the authored guides with the same resource-card layouts used in production; the generated scripting API reference is added later by the private publishing pipeline.
+The preview is completely public and does not require the closed-source mod, Mafia II, a Services checkout, platform credentials, or an upload token. It downloads the same unauthenticated, immutable scripting contract used by CI and runs the same complete generator as production, including Server API, Client API, guides, branding, navigation, and resource cards.
 
 Install [Node.js 22 or newer](https://nodejs.org/), clone this repository, and install the pinned dependencies:
 
@@ -38,7 +40,15 @@ Start the local development server:
 pnpm dev
 ```
 
-Open <http://localhost:4321/>. Edit Markdown or colocated images under `guides/`; Starlight rebuilds and refreshes the affected page automatically. All authored pages share one **Guides** navigation section and use `/guides/<page>/` routes, matching production. Source subdirectories organize repository files without creating audience or API-target groups in the published site.
+Open <http://localhost:4321/>. The first run downloads the current `testing` contract into the ignored `.cache/` directory. Edit Markdown, colocated images, `docs.config.json`, or `src/styles/production.css`; the complete production site rebuilds and the browser refreshes automatically. Source subdirectories organize repository files without creating extra navigation groups.
+
+To download the contract without starting the preview:
+
+```sh
+pnpm docs:sync
+```
+
+Set `M2O_CONTRACT_CHANNEL`, `M2O_CONTRACT_REVISION`, or `M2O_SERVICES_API_URL` to select another public contract. CI always receives an exact immutable revision from the Mod workflow, avoiding mutable-channel races.
 
 Before opening a pull request, verify the affected pages at desktop and mobile widths and run:
 
@@ -47,8 +57,6 @@ pnpm build
 git diff --check
 ```
 
-`pnpm preview` serves the completed production build after `pnpm build` when you want to inspect the exact static output.
+The generated `dist/` is the same static artifact deployed in CI.
 
-The M2O build pins the exact commit used for every published documentation deployment, so merged changes are only public after the mod documentation pipeline publishes a new revision.
-
-Merges to `main` dispatch the private M2O documentation workflow. Configure the repository secret `M2O_DOCS_TRIGGER_TOKEN` with permission to send repository-dispatch events to `mafia2online/Mod`. The private repository owns the platform deploy token and authoritative API inputs; this public repository never receives those secrets.
+Merges to `main` deploy against the selected contract channel. Contract publication also dispatches a `contract-published` event containing the exact revision. This repository owns the scoped standalone documentation upload token; the Mod repository never receives site-rendering or deployment credentials.
