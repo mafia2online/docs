@@ -3,8 +3,6 @@ name: Generate and deploy documentation
 on:
   push:
     branches: [main]
-  repository_dispatch:
-    types: [contract-published]
   workflow_dispatch:
     inputs:
       channel:
@@ -18,7 +16,7 @@ on:
         type: string
 
 concurrency:
-  group: deploy-docs-${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
+  group: deploy-docs-${{ github.event.inputs.channel || 'testing' }}
   cancel-in-progress: true
 
 permissions:
@@ -28,9 +26,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      M2O_DOCS_CHANNEL: ${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
-      M2O_CONTRACT_CHANNEL: ${{ github.event.client_payload.channel || github.event.inputs.channel || 'testing' }}
-      M2O_CONTRACT_REVISION: ${{ github.event.client_payload.contract_revision || github.event.inputs.contract_revision }}
+      M2O_DOCS_CHANNEL: ${{ github.event.inputs.channel || 'testing' }}
+      M2O_CONTRACT_CHANNEL: ${{ github.event.inputs.channel || 'testing' }}
+      M2O_CONTRACT_REVISION: ${{ github.event.inputs.contract_revision }}
       M2O_SERVICES_API_URL: ${{ vars.M2O_SERVICES_API_URL }}
       M2O_SERVICES_MOD_ID: ${{ vars.M2O_SERVICES_MOD_ID }}
       MAFIAHUB_DOCS_UPLOAD_TOKEN: ${{ secrets.M2O_DOCS_UPLOAD_TOKEN }}

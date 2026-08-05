@@ -48,7 +48,7 @@ To download the contract without starting the preview:
 pnpm docs:sync
 ```
 
-Set `M2O_CONTRACT_CHANNEL`, `M2O_CONTRACT_REVISION`, or `M2O_SERVICES_API_URL` to select another public contract. CI always receives an exact immutable revision from the Mod workflow, avoiding mutable-channel races.
+Set `M2O_CONTRACT_CHANNEL`, `M2O_CONTRACT_REVISION`, or `M2O_SERVICES_API_URL` to select another public contract. A manual documentation deployment can pin an exact immutable revision; otherwise it resolves the selected public channel when the docs workflow starts.
 
 Before opening a pull request, verify the affected pages at desktop and mobile widths and run:
 
@@ -59,4 +59,4 @@ git diff --check
 
 The generated `dist/` is the same static artifact deployed in CI.
 
-Merges to `main` deploy against the selected contract channel. Contract publication also dispatches a `contract-published` event containing the exact revision. This repository owns the scoped standalone documentation upload token; the Mod repository never receives site-rendering or deployment credentials.
+Merges to `main` deploy against the selected contract channel, and maintainers can run the deployment manually with an exact contract revision. This repository owns the scoped standalone documentation upload token; the Mod repository never receives site-rendering or deployment credentials. The Mod repository only publishes contracts and never triggers or controls this workflow.
