@@ -346,6 +346,72 @@
   filter: drop-shadow(0 0.35rem 0.5rem color-mix(in srgb, #000 45%, transparent));
 }
 
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) {
+  display: block;
+  width: 100%;
+  margin: 1.5rem 0 3rem;
+  overflow: visible;
+  border: 0;
+  background: transparent;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) thead {
+  display: none;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) tbody {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(11.5rem, 1fr));
+  gap: 1rem;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) tr {
+  min-width: 0;
+  overflow: hidden;
+  margin: 0;
+  display: grid;
+  grid-template-areas:
+    "preview"
+    "name";
+  align-items: center;
+  border: 1px solid var(--mh-line);
+  border-radius: 0.75rem;
+  background: linear-gradient(160deg, var(--mh-accent-soft), transparent 42%), var(--sl-color-gray-6);
+  box-shadow: 0 0.6rem 1.8rem color-mix(in srgb, #000 12%, transparent);
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) td {
+  min-width: 0;
+  padding: 0.75rem;
+  border: 0;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) td:nth-child(1) {
+  grid-area: name;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) td:nth-child(1) code {
+  color: var(--sl-color-white);
+  background: transparent;
+  font-size: 0.82rem;
+  font-weight: 750;
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) td:nth-child(2) {
+  grid-area: preview;
+  padding: 0;
+  border-bottom: 1px solid var(--mh-line);
+  background: var(--sl-color-bg);
+}
+
+.sl-markdown-content table:has(img[alt^="Vehicle ID"]) td:nth-child(2) img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  margin: 0;
+  object-fit: cover;
+}
+
 @media (max-width: 520px) {
   .sl-markdown-content .mh-weapon-grid {
     grid-template-columns: 1fr;
@@ -356,6 +422,10 @@
   }
 
   .sl-markdown-content table:has(img[alt^="Wheel model"]) tbody {
+    grid-template-columns: 1fr;
+  }
+
+  .sl-markdown-content table:has(img[alt^="Vehicle ID"]) tbody {
     grid-template-columns: 1fr;
   }
 

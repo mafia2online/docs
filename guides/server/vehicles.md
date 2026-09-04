@@ -10,10 +10,12 @@ Vehicles are fully server-authoritative: everything from the engine toggle to wh
 
 ## Spawning
 
+The model ID is a numeric index into the car registry; see the [vehicle catalog](/guides/catalogs/vehicles/) for a visual reference of IDs to models.
+
 ```js title="server/main.js"
 const p = player.position;
 const vehicle = Vehicle.spawn(
-  32,                                   // model id: 0..51 index into the car registry
+  32,                                   // model id: see the vehicle catalog
   new Vector3(p.x + 4, p.y, p.z),       // position (optional)
   Quaternion.fromEuler(0, 0, 90)        // rotation (optional; Euler Vector3 also accepted)
 );
