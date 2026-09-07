@@ -101,6 +101,27 @@ The server-side handler follows the usual [trust rules](/guides/concepts/events/
 
 A family of browser lifecycle payloads — view created, loading started/ready/failed, navigation, popups, cursor and focus changes, and page console messages (`BrowserConsoleMessageEvent`, with the message, source, line, and severity) — is documented alongside `Web` in the [client reference](/reference/client/variables/web/); the console messages are the first place to look when a page misbehaves.
 
+### Subscribing to browser view events
+
+Those payload interfaces are not listed in `EventMap`, and `Web.on` does not deliver them — `Web.on(viewId, eventName)` only carries events the page itself raises with `callEvent`. Browser view events are dispatched to the shared `Events.on` table instead, named after the payload interface in camelCase and carrying the payload as a single argument:
+
+```js title="client/main.js"
+Events.on("browserInputFocusChange", (e) => {
+  // e = { viewId: number, focused: boolean }
+  console.log(`view ${e.viewId} focus: ${e.focused}`);
+});
+
+Events.on("browserCursorChange", (e) => {
+  // e = { viewId: number, cursor: string, cursorType: number }
+});
+
+Events.on("browserResourceBlocked", (e) => {
+  // e = { viewId: number, url: string, reason: string }
+});
+```
+
+Every payload includes `viewId`, so a script with several views should filter on it. `browserInputFocusChange` reports the engine's actual input focus for a view, which makes it the reliable gate for suppressing game hotkeys while the player is typing into a page.
+
 ## Cleanup
 
 Destroy views on `resourceStop` — the framework would collect them anyway, but an explicit teardown also stops your timers:
