@@ -25,7 +25,7 @@ Key.unbind("f6");
 
 Two ownership rules keep binds predictable:
 
-- Binds fire only in-session **while no UI owns input** — an open chat box, menu, world map, or focused [web view](/guides/client/web-views/) suspends them.
+- Binds fire only in-session **while no UI owns input** — an open chat box, the escape menu, the debug cursor, or a focused [web view](/guides/client/web-views/) suspends them. The native [world map](/guides/client/hud/#the-world-map) does *not*: binds keep firing while it is up, which is how a toggle bind closes it.
 - Binds are **resource-owned**: they are cleared automatically when your resource stops.
 
 A bind that should have a replicated effect relays to the server, which applies it authoritatively — the client never mutates shared state itself:

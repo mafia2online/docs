@@ -108,6 +108,24 @@ WorldMap.setWaypoint(x, y);  // GPS route; does NOT fire the server's playerWayp
 WorldMap.clearWaypoint();
 ```
 
+The map is **modal**. While it is up it takes the gameplay controls and hides the HUD, so the player stands still under a fullscreen map. Nothing is paused by this — the world keeps running, other players keep moving, and the server sees no difference — but to the player who opened it, a map they cannot get out of is indistinguishable from a frozen game.
+
 :::caution
-The map owns input while open — close it from a timer or a server event, not from a key bind, which will not fire while the map has input.
+The game has no built-in way to close the map, and Tab/M do not reach it. **Every `WorldMap.open()` needs a close path you provide** — a toggle bind, a timer, or a server event — or the player is stuck there until they restart the game.
 :::
+
+Key binds keep firing while the map is open, so a toggle bind is the usual pattern:
+
+```js title="client/main.js"
+Key.bind("m", "down", () => {
+  if (WorldMap.isOpen()) {
+    WorldMap.close();
+  } else {
+    WorldMap.open();
+  }
+});
+```
+
+Because `isOpen()` only flips true once the open fade completes, a second press during the fade takes the `open()` branch again instead of closing. Track your own "requested open" flag if the map can be driven from a fast-repeating source.
+
+If you want a map that leaves the player in control, draw your own from [Render2D](/guides/client/render2d/) or a [web view](/guides/client/web-views/) instead; the native one is always modal.
