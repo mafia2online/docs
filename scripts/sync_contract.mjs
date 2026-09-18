@@ -20,7 +20,7 @@ export const syncContract = async () => {
   const response = await fetch(manifestUrl);
   if (!response.ok) throw new Error(`Unable to download scripting contract manifest (${response.status}) from ${manifestUrl}`);
   const manifest = await response.json();
-  if (manifest.schemaVersion !== 1 || manifest.slug !== "m2o" || manifest.channel !== channel || !/^[a-f0-9]{64}$/.test(manifest.revision ?? "") || !Array.isArray(manifest.files)) throw new Error("Services returned an invalid scripting contract manifest");
+  if (manifest.schemaVersion !== 1 || manifest.slug !== "m2o" || manifest.channel !== channel || !/^[a-f0-9]{64}$/.test(manifest.revision ?? "") || !/^[A-Za-z0-9][A-Za-z0-9._+-]{0,63}$/.test(manifest.version ?? "") || !Array.isArray(manifest.files)) throw new Error("Services returned an invalid scripting contract manifest");
   if (requestedRevision && manifest.revision !== requestedRevision) throw new Error("Services returned a different scripting contract revision");
   if (!manifest.files.length || manifest.files.length > maxFiles || manifest.files.reduce((total, file) => total + (file.size ?? 0), 0) > maxSize || manifest.files.some((file) => !allowedPath.test(file.path ?? "") || !/^[a-f0-9]{64}$/.test(file.sha256 ?? "") || !Number.isSafeInteger(file.size) || file.size < 0)) throw new Error("Scripting contract manifest contains invalid files");
   const paths = new Set(manifest.files.map((file) => file.path));

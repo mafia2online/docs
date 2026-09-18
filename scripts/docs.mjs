@@ -52,12 +52,15 @@ const createRenderConfig = async (contractRoot) => {
 
 const generate = async (output) => {
   const contractRoot = await syncContract();
-  const contractRevision = await readFile(path.join(contractRoot, "manifest.json"), "utf8").then((value) => JSON.parse(value).revision).catch(() => "local");
+  const contractManifest = await readFile(path.join(contractRoot, "manifest.json"), "utf8").then(JSON.parse).catch(() => null);
+  const contractRevision = contractManifest?.revision ?? "local";
+  const contractVersion = contractManifest?.version ?? null;
   await mkdir(cache, { recursive: true });
   await writeFile(path.join(cache, "contract-revision"), `${contractRevision}\n`);
   const { configPath, servicesCliVersion } = await createRenderConfig(contractRoot);
   const contentRevision = spawnSync("git", ["rev-parse", "HEAD"], { cwd: root, encoding: "utf8" }).stdout.trim() || "working-tree";
   const args = ["docs", "generate", "--config", configPath, "--out", output, "--content-root", root, "--content-revision", contentRevision, "--site-url", process.env.M2O_DOCS_SITE_URL ?? "http://127.0.0.1:4321", "--base-path", process.env.M2O_DOCS_BASE_PATH ?? "/"];
+  if (contractVersion) args.push("--contract-version", contractVersion);
   const localCli = process.env.MAFIAHUB_SERVICES_CLI_ENTRYPOINT;
   if (localCli) run(process.execPath, [path.resolve(localCli), ...args]);
   else run("pnpm", ["dlx", `@mafiahub/services-cli@${servicesCliVersion}`, ...args]);
