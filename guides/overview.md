@@ -62,4 +62,4 @@ Server and client declarations must be loaded separately. A global shown in one 
 
 **Client-side systems:** the [HUD and native UI](/guides/client/hud/), [input and controls](/guides/client/input-controls/), [Render2D](/guides/client/render2d/), and [web views](/guides/client/web-views/).
 
-**Illustrated catalogs:** [weapon IDs](/guides/catalogs/weapons/), [map blip icons](/guides/catalogs/map-blips/), [vehicle wheel models](/guides/catalogs/wheels/), and [weather templates](/guides/catalogs/weather/).
+**Illustrated catalogs:** [weapon IDs](/guides/catalogs/weapons/), [map blip icons](/guides/catalogs/map-blips/), [vehicle wheel models](/guides/catalogs/wheels/), [weather templates](/guides/catalogs/weather/), [marker models](/guides/catalogs/markers/), [prop models](/guides/catalogs/props/), [character models](/guides/catalogs/character-models/), [hand props](/guides/catalogs/hand-props/), and [animation clips](/guides/catalogs/animations/).

@@ -23,7 +23,7 @@ Every entity type shares the `Entity` base: `position`, `rotation`, `virtualWorl
 
 ## Blips
 
-Map icons, drawn for everyone regardless of distance. An icon is a `(library, id)` pair from the game's atlas — see the illustrated [blip icon catalog](/guides/catalogs/map-blips/) — and `color` picks from the navigation palette (1 player-blue, 2 enemy-red, 4 friendly-green, 5 objective-yellow, …). Blips can follow entities:
+Map icons, drawn for everyone regardless of distance. An icon is a `(library, id)` pair from the game's atlas — see the illustrated [blip icon catalog](/guides/catalogs/map-blips/) — and `color` is an index (`0`–`8`) into the navigation palette, whose entries are named for their use rather than their colour (see the catalog for what renders). Blips can follow entities:
 
 ```js title="server/main.js"
 Events.on("playerConnect", (player) => {
@@ -37,10 +37,10 @@ Events.on("playerConnect", (player) => {
 
 ## Markers and trigger volumes
 
-Markers are floating 3D icons. Created with a `triggerRadius`, a marker doubles as a **native trigger volume**: `markerHit` and `markerLeave` fire server-side when a player's body crosses the sphere — event-driven on the client, no per-tick polling on your side.
+Markers are floating 3D icons; `model` picks one of the [marker models](/guides/catalogs/markers/). Created with a `triggerRadius`, a marker doubles as a **native trigger volume**: `markerHit` and `markerLeave` fire server-side when a player's body crosses the sphere — event-driven on the client, no per-tick polling on your side.
 
 ```js title="server/main.js"
-const pickup = Marker.create(x, y, z, 0, undefined, 3.0); // model 0, 3m trigger
+const pickup = Marker.create(x, y, z, 0, undefined, 3.0); // model 0 (RTR_POUTA), 3m trigger
 pickup.setScale(1.5);
 pickup.setColor(255, 80, 0);
 
@@ -64,7 +64,7 @@ label.setVisibleTo(player);   // replicated only to this player's client
 
 ## Props, blockers, and spike strips
 
-- **Props** are non-destructible static world objects (crates, trees, crash meshes) from the server's prop catalog; `model` is a flat index into it. `collision: false` makes decoration players and cars pass through, and the `collision` property can be flipped live.
+- **Props** are non-destructible static world objects (crates, trees, crash meshes) from the server's prop registry; `model` is a flat index into it, listed in the [prop catalog](/guides/catalogs/props/). `collision: false` makes decoration players and cars pass through, and the `collision` property can be flipped live.
 - **Blockers** are invisible collision boxes. The `typeMask` selects what they stop — vehicles, pedestrians, or both — which makes them the building block for closing a street or fencing an event area without visible geometry.
 - **Spike strips** are invisible line triggers (`length` meters at `heading` radians): a car driving across an enabled strip gets a tyre punctured (`setEnabled(false)` disarms without destroying).
 
@@ -80,6 +80,8 @@ Events.on("npcDeath", (npc, killer, info) => {
   setTimeout(() => npc.respawn(), 10_000); // back to full health, same spot
 });
 ```
+
+The `model` argument is an index into the same registry as `player.setModel`; see the [character model catalog](/guides/catalogs/character-models/).
 
 NPCs carry the same nametag controls as players: `setNametagText`, `setNametagColor`, `setNametagVisible`, `setNametagHealthVisible`.
 
