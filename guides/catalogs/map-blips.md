@@ -27,7 +27,7 @@ Events.on("playerCommand", (player, command) => {
     position.z,
     0, // Library
     1, // Icon ID
-    5  // Objective color
+    5  // Navigation palette index
   );
 
   droppedBlips.push(blip);
@@ -36,7 +36,7 @@ Events.on("playerCommand", (player, command) => {
 
 Call `blip.setIcon(library, iconId)` to change an existing icon. `blip.attachToPlayer(player)` and `blip.attachToVehicle(vehicle)` make it follow an entity; `blip.destroy()` removes it. Keep references to created blips so your resource can destroy them when they are no longer needed.
 
-The optional color uses the game navigation palette: `0` default, `1` player, `2` enemy, `3` neutral, `4` friendly, `5` objective, `6` vehicle, `7` shop, and `8` police.
+The optional `color` is an index from `0` to `8` into the game's navigation palette; a blip created without one uses `1`. The game names these entries after what it uses them for (default, player, enemy, neutral, friendly, objective, vehicle, shop, police), and the names do not describe the colour that renders: in game, `0` draws black, `7` red, and `8` green. Place a test blip before relying on any other index for a particular colour.
 
 ## Available map icons
 
