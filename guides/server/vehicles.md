@@ -10,7 +10,7 @@ Vehicles are fully server-authoritative: everything from the engine toggle to wh
 
 ## Spawning
 
-The model ID is a numeric index into the car registry; see the [vehicle catalog](/guides/catalogs/vehicles/) for a visual reference of IDs to models.
+The model ID is a numeric index into the car registry; see the [vehicle catalog](/guides/catalogs/vehicles/) for a visual reference of IDs to models. `Vehicle.spawn` also takes a model name, such as `"shubert_38"`, which is the way to spawn a car your server streams (see [Streamed content](/guides/server/streamed-content/)).
 
 ```js title="server/main.js"
 const p = player.position;

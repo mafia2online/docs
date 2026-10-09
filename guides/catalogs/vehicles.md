@@ -23,7 +23,7 @@ const vehicle = Vehicle.spawn(
 );
 ```
 
-The first argument is an ID from this page. See the [vehicles guide](/guides/server/vehicles/) for the full state surface (color, wheels, fuel, locking, and more) once the vehicle is spawned.
+The first argument is an ID from this page, or a model name. Cars a server streams are not listed here: they take IDs after the stock ones and are spawned by name (see [Streamed content](/guides/server/streamed-content/)). See the [vehicles guide](/guides/server/vehicles/) for the full state surface (color, wheels, fuel, locking, and more) once the vehicle is spawned.
 
 ## Available vehicles
 
