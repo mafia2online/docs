@@ -178,10 +178,48 @@ Events.on("resourceStop", (resourceName) => {
 
 ## Editor autocomplete
 
-The same TypeScript declarations that generate this reference can be loaded into your editor. Point a `tsconfig.json` at the published contract's `server/api.d.ts` or `client/api.d.ts` for the environment each side runs in, and you get autocomplete and type checking for the whole API.
+The same TypeScript declarations that generate this reference are published on npm as [`@mafia2online/types`](https://www.npmjs.com/package/@mafia2online/types). Install it as a dev dependency of your resource:
+
+```sh
+npm install --save-dev @mafia2online/types
+```
+
+The package has one entry per side: `@mafia2online/types/server` and `@mafia2online/types/client`. Give each side its own `tsconfig.json` that names its entry in `types`, and your editor gets autocomplete and type checking for the whole API, even in plain JavaScript files:
+
+```jsonc title="server/tsconfig.json"
+{
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["@mafia2online/types/server"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true
+  },
+  "include": ["**/*.js"]
+}
+```
+
+```jsonc title="client/tsconfig.json"
+{
+  "compilerOptions": {
+    "lib": ["ES2022"],
+    "types": ["@mafia2online/types/client"],
+    "allowJs": true,
+    "checkJs": true,
+    "noEmit": true
+  },
+  "include": ["**/*.js"]
+}
+```
+
+Everything is declared as a global, the way the runtime installs it: `Events`, `Player`, `Vector3` and the rest need no import. Leave `DOM` out of `lib`; it would declare a second `console` and `setTimeout`.
 
 :::caution
 Load the server and client declarations **separately** — a global documented in one environment does not exist in the other. `World` exists in both but with different members; `Hud` is client-only; `PhoneBook` is server-only.
+:::
+
+:::tip
+The package version is the server release version. Install the one matching the server you deploy to; a newer package may declare bindings an older server does not have.
 :::
 
 ## Where to go next
