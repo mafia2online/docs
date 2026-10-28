@@ -6,13 +6,13 @@ sidebar:
 
 # Streamed content
 
-A server can ship game content that players do not have: new cars, and replacements for the stock ones. Players download it when they connect, before the world loads, and it is gone again when they leave. Nobody installs anything, and no script is involved. Drop the files into a resource and the server registers them.
+A server can ship game content that players do not have: new cars, replacements for the stock ones, and edits to the city itself. Players download it when they connect, before the world loads, and it is gone again when they leave. Nobody installs anything, and no script is involved. Drop the files into a resource and the server registers them.
 
-Cars are the first kind of content that streams. Player skins, crash objects and city parts are not supported yet.
+Two kinds of content stream today: **cars**, and **map edits** made with Illusion Toolkit (changed districts, new interiors, moved load zones). Player skins are not supported yet.
 
 ## How a resource ships content
 
-Everything under a resource's `stream/` folder is packed into one download. The server builds it when the resource starts and every client checks it before using it. Two kinds of file are accepted:
+Everything under a resource's `stream/` folder is packed into one download. The server builds it when the resource starts and every client checks it before using it. A car resource looks like this:
 
 ```text title="resources/my-cars/"
 package.json
@@ -24,10 +24,14 @@ stream/
     shubert_38_custom.mtl      materials the car adds (only when it has any)
 ```
 
+These kinds of file are accepted:
+
 - `stream/sds/cars/<name>.sds` is a car archive. A `<name>_z.sds` next to it is the same car for winter sessions.
+- `stream/sds/<path>.sds.patch` is a patch of one of the game's own archives, at the same path the game has it (`stream/sds/city/uppertown.sds.patch` patches `sds/city/uppertown.sds`). See [Map edits](#map-edits).
+- `stream/sds/<path>.sds` outside `cars/` is an archive the game does not have, such as a new interior under `sds/shops/`.
 - `stream/materials/<name>.mtl` is a material library, loaded in addition to the game's own.
 
-File names may use only `a-z`, `0-9` and `_`. Anything else in `stream/` makes the server skip the whole resource's download, so keep the folder to these files.
+Folder and file names may use only `a-z`, `0-9` and `_`. Anything else in `stream/` makes the server skip the whole resource's download, so keep the folder to these files.
 
 The resource needs nothing beyond a `package.json`. A content-only resource has no scripts:
 
@@ -68,6 +72,58 @@ The export carries everything the car needs:
 
 To replace a stock car instead, build it under that car's name (`car_substitute`) and export it. A replacement keeps the stock car's settings.
 
+## Map edits
+
+A map edit changes the city: a district with new buildings or interiors, a new interior of its own, load zones moved so a new area stays loaded. It ships the way the game ships its own DLC changes, as **patches** of the game's archives rather than copies of them. Players never replace a game file: the patch is applied in memory while they are on your server, and their game is untouched when they leave.
+
+Edits made with [Illusion Toolkit](https://github.com/mafia2online/illusion-toolkit) export ready to use. A typical resource:
+
+```text title="resources/greenfield/"
+package.json
+stream/
+  sds/
+    city/
+      greenfield.sds.patch           the district, summer
+      greenfield_z.sds.patch         the district, winter
+    city_univers/
+      city_univers.sds.patch         load zones and the interior table
+    shops/
+      grn_vilgm.sds                  a new interior (the whole archive)
+  materials/
+    greenfield.mtl                   materials the district adds
+    greenfield_z.mtl
+    grn_vilgm.mtl                    materials the interior adds
+```
+
+The game path decides what each file is, so no list or script is needed:
+
+- an archive the game ships travels as a **patch** (`<archive>.sds.patch`) against the game's own bytes;
+- an archive the game does not have travels **whole** (`<archive>.sds`);
+- the materials an archive adds travel in a library named after it.
+
+### Exporting from Illusion Toolkit
+
+1. Edit the map in the toolkit as usual and **Save**. You do not need to **Build** into your game first; an archive you already built exports all the same.
+2. Open **File → Export…**. This is the same window as **Build SDS…**, with a destination at the top. Choose **M2O resource**.
+3. Name the export (for example `greenfield`) and choose its folder. The list shows every archive you edited; tick the ones this export ships. An edit that spans several archives (a new interior plus `city_univers`, or summer and winter) must ship them together.
+4. **Export.** Copy the folder's `stream` into your resource (`resources/<name>/stream`) and add a `package.json` like the one above.
+
+The export is saved as a project: the window opens on it next time with its archives ticked, and exporting again replaces that folder. Archives that match the game are left out, and a failed export leaves the folder as it was.
+
+The toolkit refuses an export it cannot make correctly, and says why:
+
+- **The game's own archive is no longer the original** and no backup of it was found. A patch must be made against the bytes every player has. Restore the archive (or verify the game files in Steam) and export again.
+- **A mesh uses a material that no library defines**, or the edit **changes one of the game's own materials**. The game keeps its own definition of a material it knows, so make a new material instead.
+- **A name M2O cannot stream** (anything but `a-z`, `0-9` and `_`).
+
+### Seasons
+
+Summer and winter are different archives: `greenfield.sds` and `greenfield_z.sds`. A patch applies to exactly one of them, so an edit only appears in the season it was made for. Edit both and export both to change both. A session loads only its own season's archives (see [Seasons](/guides/server/seasons/)).
+
+### Load zones and interiors
+
+The city stays loaded only inside its load zones, the box volumes in `city_univers`. A new area outside them needs the zones moved or added, and a new interior needs its load and unload zones and a row in the game's shop table, all of which live in `city_univers`. That is why such an edit ships a `city_univers.sds.patch` next to the district. Players get it before the world opens, so the zones are right from the moment they spawn.
+
 ## What the server checks
 
 The server reads every car before a player can download it. A car that fails is **not shipped and not registered**: the server log names it and gives the reason, and players never receive it.
@@ -83,14 +139,19 @@ The server reads every car before a player can download it. A car that fails is 
 
 A material library that is not a valid Mafia II library is skipped from the download as well, with a warning in the log.
 
+Map files are checked the same way: a new archive must be a Mafia II PC archive, and a patch must be a native SDS patch. A file that is neither is not shipped.
+
 Checks run when a resource starts. The results are cached until a file under `stream/` changes, so restarting a server with many cars stays fast.
 
 ## Downloads and caching
 
-Players download a resource's content once and keep it in their cache. A later connection reuses it unless the files changed on the server. While the download runs, the loading screen shows its progress. The world loads after the content is in place, so a streamed car is never missing when it spawns.
+Players download a resource's content once and keep it in their cache. A later connection reuses it unless the files changed on the server. While the download runs, the loading screen shows its progress. The world loads after the content is in place, so a streamed car is never missing when it spawns and a map edit is there from the first frame.
 
 ## Limits
 
 - Players who are already connected when a resource starts do not receive its cars until they reconnect. Start content resources with the server.
 - Stopping a resource does not remove its cars from the session. Model IDs are part of the network protocol and cannot be reused mid-session.
 - A new car shows the title of the car it was cloned from. Its own title text exists only on the machine it was made on.
+- One archive takes one patch. When two resources patch the same archive, players apply the first one and ignore the second, and their game log says so. Combine edits to the same district, or to `city_univers`, in one export.
+- Map edits apply when the world opens. Starting or changing a map resource on a running server reaches players when they reconnect.
+- Players need the original game archives. A player whose game files were modified by hand may see an edit applied wrongly; verifying the game files in Steam fixes it.

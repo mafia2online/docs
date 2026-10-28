@@ -58,7 +58,7 @@ Server and client declarations must be loaded separately. A global shown in one 
 - [Events](/guides/concepts/events/) — listeners, the client↔server bridge, and the trust boundary.
 - [Server, client, and the UI](/guides/concepts/ui-architecture/) — why UI is client-side and the intent pattern that follows.
 
-**Server-side systems:** [chat and commands](/guides/server/chat-commands/), the [player lifecycle](/guides/server/player-lifecycle/), [vehicles](/guides/server/vehicles/), [streamed content](/guides/server/streamed-content/) (custom and replacement cars), [world entities and triggers](/guides/server/world-entities/), [shops and economy](/guides/server/shops-economy/), [persistence](/guides/server/persistence/), and [seasons](/guides/server/seasons/).
+**Server-side systems:** [chat and commands](/guides/server/chat-commands/), the [player lifecycle](/guides/server/player-lifecycle/), [vehicles](/guides/server/vehicles/), [streamed content](/guides/server/streamed-content/) (custom and replacement cars, map edits), [world entities and triggers](/guides/server/world-entities/), [shops and economy](/guides/server/shops-economy/), [persistence](/guides/server/persistence/), and [seasons](/guides/server/seasons/).
 
 **Client-side systems:** the [HUD and native UI](/guides/client/hud/), [input and controls](/guides/client/input-controls/), [Render2D](/guides/client/render2d/), and [web views](/guides/client/web-views/).
 
