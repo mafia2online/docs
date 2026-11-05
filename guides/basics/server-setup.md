@@ -21,6 +21,7 @@ Start the server once with no configuration at all. If `server.json` is missing,
   "map": "",
   "maxplayers": 32,
   "server-token": "",
+  "download-url": "",
   "mod": {
     "season": "summer",
     "map_file": ""
@@ -37,6 +38,7 @@ Start the server once with no configuration at all. If `server.json` is missing,
 | `map` | — | Map name reported to the server browser. |
 | `maxplayers` | `32` | Connection cap. |
 | `server-token` | — | Secret key used to authenticate the server against MafiaHub services (masterlist listing). |
+| `download-url` | — | Web addresses players download resources from before your server, such as a CDN. See [Serve downloads from a CDN](/guides/server/streamed-content/#serve-downloads-from-a-cdn). |
 
 ### Mod keys
 

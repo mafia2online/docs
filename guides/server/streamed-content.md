@@ -147,6 +147,33 @@ Checks run when a resource starts. The results are cached until a file under `st
 
 Players download a resource's content once and keep it in their cache. A later connection reuses it unless the files changed on the server. While the download runs, the loading screen shows its progress. The world loads after the content is in place, so a streamed car is never missing when it spawns and a map edit is there from the first frame.
 
+## Serve downloads from a CDN
+
+Players normally download from your server on its game port, over TCP. If your server's upload speed holds joins back, the `download-url` setting makes players try other web addresses first, such as a CDN or your own web server. It covers everything players download when they join: streamed content and your resources' client packages.
+
+```json title="server.json"
+{
+  "download-url": "https://cdn.example.com/my-server"
+}
+```
+
+1. Set `download-url` in `server.json`, or pass `--download-url` when you start the server. Each address must start with `http://` or `https://`. Separate several addresses with spaces or commas. Players try them in the order listed.
+2. Start the server. The log names the files to upload and the folder they are in, normally `.packages/`:
+
+   ```text
+   Clients download from https://cdn.example.com/my-server first; mirror these files and their .chunks lists from '<folder>' there: <file names>
+   ```
+
+3. Upload each named file and its `<file name>.chunks` list directly under the address, for example `https://cdn.example.com/my-server/<file name>`. Upload only these files, not the whole `.packages/` folder.
+4. After you change a resource, upload its new files as well. Players get anything you have not uploaded yet from your server.
+
+The host must meet two requirements:
+
+- **Public access.** Players send no login or token, so anyone with a file's address can download it, even if your server has a join password.
+- **Range requests.** Players fetch files in parts. Without range support, they cannot download only the parts that changed.
+
+The game checks each file's SHA-256 hash before using it. If an address fails or serves the wrong file, the game falls back to the next source for that file, so keep the game port reachable over TCP. Without a `.chunks` list, a player downloads the whole file from the CDN and cannot reuse parts of the copy they already have.
+
 ## Limits
 
 - Players who are already connected when a resource starts do not receive its cars until they reconnect. Start content resources with the server.
